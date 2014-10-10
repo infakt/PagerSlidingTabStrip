@@ -18,8 +18,10 @@ package com.astuetz;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
@@ -39,9 +41,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Locale;
-
 import com.astuetz.pagerslidingtabstrip.R;
+
+import java.util.Locale;
 
 public class PagerSlidingTabStrip extends HorizontalScrollView {
 
@@ -88,7 +90,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private int dividerWidth = 1;
 
 	private int tabTextSize = 12;
-	private int tabTextColor = 0xFF666666;
+	private ColorStateList tabTextColor = new ColorStateList(new int [][]{}, new int [] {Color.BLACK});
 	private Typeface tabTypeface = null;
 	private int tabTypefaceStyle = Typeface.BOLD;
 
@@ -132,7 +134,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		TypedArray a = context.obtainStyledAttributes(attrs, ATTRS);
 
 		tabTextSize = a.getDimensionPixelSize(0, tabTextSize);
-		tabTextColor = a.getColor(1, tabTextColor);
+		tabTextColor = a.getColorStateList(1);
 
 		a.recycle();
 
@@ -349,6 +351,11 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		for (int i = 0; i < tabCount - 1; i++) {
 			View tab = tabsContainer.getChildAt(i);
 			canvas.drawLine(tab.getRight(), dividerPadding, tab.getRight(), height - dividerPadding, dividerPaint);
+
+		}
+		// setProper text state
+		for (int i = 0; i<tabsContainer.getChildCount(); i++){
+			tabsContainer.getChildAt(i).setSelected(i==currentPosition + Math.round(currentPositionOffset));
 		}
 	}
 
@@ -493,17 +500,17 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		return tabTextSize;
 	}
 
-	public void setTextColor(int textColor) {
+	public void setTextColor(ColorStateList textColor) {
 		this.tabTextColor = textColor;
 		updateTabStyles();
 	}
 
 	public void setTextColorResource(int resId) {
-		this.tabTextColor = getResources().getColor(resId);
+		this.tabTextColor = getResources().getColorStateList(resId);
 		updateTabStyles();
 	}
 
-	public int getTextColor() {
+	public ColorStateList getTextColor() {
 		return tabTextColor;
 	}
 
@@ -530,6 +537,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		return tabPadding;
 	}
 
+	public void setTabTypeface(Typeface typeface) {
+		tabTypeface = typeface;
+		updateTabStyles();
+	}
 	@Override
 	public void onRestoreInstanceState(Parcelable state) {
 		SavedState savedState = (SavedState) state;
