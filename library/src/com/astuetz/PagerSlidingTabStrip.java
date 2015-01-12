@@ -52,10 +52,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	}
 
 	// @formatter:off
-	private static final int[] ATTRS = new int[] {
-		android.R.attr.textSize,
-		android.R.attr.textColor
-    };
+	private static final int[] ATTRS = new int[]{
+			android.R.attr.textSize,
+			android.R.attr.textColor
+	};
 	// @formatter:on
 
 	private LinearLayout.LayoutParams defaultTabLayoutParams;
@@ -90,7 +90,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private int dividerWidth = 1;
 
 	private int tabTextSize = 12;
-	private ColorStateList tabTextColor = new ColorStateList(new int [][]{}, new int [] {Color.BLACK});
+	private ColorStateList tabTextColor = new ColorStateList(new int[][]{}, new int[]{Color.BLACK});
 	private Typeface tabTypeface = null;
 	private int tabTypefaceStyle = Typeface.BOLD;
 
@@ -256,6 +256,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 		tab.setPadding(tabPadding, 0, tabPadding, 0);
 		tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
+		((MarginLayoutParams) tab.getLayoutParams()).rightMargin = tabMarginRight;
 	}
 
 	private void updateTabStyles() {
@@ -354,8 +355,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 		}
 		// setProper text state
-		for (int i = 0; i<tabsContainer.getChildCount(); i++){
-			tabsContainer.getChildAt(i).setSelected(i==currentPosition + Math.round(currentPositionOffset));
+		for (int i = 0; i < tabsContainer.getChildCount(); i++) {
+			tabsContainer.getChildAt(i).setSelected(i == currentPosition + Math.round(currentPositionOffset));
 		}
 	}
 
@@ -528,6 +529,12 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		return tabBackgroundResId;
 	}
 
+	private int tabMarginRight;
+
+	public void setTabMarginRight(int tabMarginRightPx) {
+		this.tabMarginRight = tabMarginRightPx;
+	}
+
 	public void setTabPaddingLeftRight(int paddingPx) {
 		this.tabPadding = paddingPx;
 		updateTabStyles();
@@ -541,6 +548,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		tabTypeface = typeface;
 		updateTabStyles();
 	}
+
 	@Override
 	public void onRestoreInstanceState(Parcelable state) {
 		SavedState savedState = (SavedState) state;
