@@ -51,6 +51,14 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		int getPageIconResId(int position);
 	}
 
+	public interface IndicatorListener {
+		void onIndicatorPositionChanged(float left, float top, float right, float bottom);
+	}
+
+	public interface OnTextTabAddedListener {
+		void onTextTabAdded(TextView tab);
+	}
+
 	// @formatter:off
 	private static final int[] ATTRS = new int[]{
 			android.R.attr.textSize,
@@ -63,6 +71,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 	private final PageListener pageListener = new PageListener();
 	public OnPageChangeListener delegatePageListener;
+
+	private IndicatorListener indicatorListener;
+	public void setIndicatorListener(IndicatorListener indicatorListener) {
+		this.indicatorListener = indicatorListener;
+	}
+
+	private OnTextTabAddedListener onTextTabAddedListener;
+	public void setOnTextTabAddedListener(OnTextTabAddedListener onTextTabAddedListener) {
+		this.onTextTabAddedListener = onTextTabAddedListener;
+	}
 
 	private LinearLayout tabsContainer;
 	private ViewPager pager;
@@ -234,6 +252,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		tab.setSingleLine();
 
 		addTab(position, tab);
+		if(onTextTabAddedListener != null){
+			onTextTabAddedListener.onTextTabAdded(tab);
+		}
 	}
 
 	private void addIconTab(final int position, int resId) {
@@ -344,7 +365,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		}
 
 		canvas.drawRect(lineLeft, height - indicatorHeight, lineRight, height, rectPaint);
-
+		if(indicatorListener != null){
+			indicatorListener.onIndicatorPositionChanged(lineLeft, height - indicatorHeight, lineRight, height);
+		}
 
 		// draw divider
 
