@@ -35,6 +35,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -65,9 +66,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			android.R.attr.textColor
 	};
 	// @formatter:on
-
-	private LinearLayout.LayoutParams defaultTabLayoutParams;
-	private LinearLayout.LayoutParams expandedTabLayoutParams;
 
 	private final PageListener pageListener = new PageListener();
 	public OnPageChangeListener delegatePageListener;
@@ -182,12 +180,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		dividerPaint.setAntiAlias(true);
 		dividerPaint.setStrokeWidth(dividerWidth);
 
-		defaultTabLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-		expandedTabLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f);
-
 		if (locale == null) {
 			locale = getResources().getConfiguration().locale;
 		}
+	}
+
+	private ViewGroup.LayoutParams defaultTabLayoutParams(){
+		return new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+	}
+	private ViewGroup.LayoutParams expandedTabLayoutParams(){
+		return new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f);
 	}
 
 	public void setViewPager(ViewPager pager) {
@@ -276,8 +278,12 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		});
 
 		tab.setPadding(tabPadding, 0, tabPadding, 0);
-		tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
+		tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams() : defaultTabLayoutParams());
 		((MarginLayoutParams) tab.getLayoutParams()).rightMargin = tabMarginRight;
+		if (position == 0) {
+			((MarginLayoutParams) tab.getLayoutParams()).leftMargin = tabMarginRight;
+		}
+		tab.requestLayout();
 	}
 
 	private void updateTabStyles() {
